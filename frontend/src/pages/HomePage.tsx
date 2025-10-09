@@ -8,12 +8,14 @@ import TaskListPagination from "@/components/TaskListPagination";
 
 const HomePage = () => {
   return (
-    <div className="min-h-screen w-full relative">
-      {/* Peachy Mint Dream Gradient */}
+    <div className="min-h-screen w-full bg-white relative overflow-hidden">
+      {/* Soft Lavender Center Glow */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 z-0 pointer-events-none"
         style={{
-          background: `linear-gradient(135deg, #FFB5A7 0%, #F8D7DA 25%, #E8F5E8 75%, #B8F2D0 100%)`,
+          backgroundImage: `
+       radial-gradient(circle at center, #c4b5fd, transparent)
+     `,
         }}
       />
 
