@@ -1,4 +1,5 @@
-// export const FilterType = {
-//     all: "Tất cả",
-//     active: ""
-// }
+export const FilterType = {
+  all: "All",
+  active: "Active",
+  completed: "Completed",
+};
