@@ -17,11 +17,12 @@ const HomePage = () => {
   const [activeTaskCount, setActiveTaskCount] = useState(0);
   const [completedTaskCount, setCompletedTaskCount] = useState(0);
   const [filter, setFilter] = useState("all");
+  const [dateQuery, setDateQuery] = useState("today");
 
   // Logic to fetch tasks from the backend
   const fetchTasks = async () => {
     try {
-      const res = await api.get("/tasks");
+      const res = await api.get(`/tasks?filter=${dateQuery}`);
       setTaskBuffer(res.data.tasks || []);
       setActiveTaskCount(res.data.activeCount || 0);
       setCompletedTaskCount(res.data.completedCount || 0);
@@ -33,7 +34,7 @@ const HomePage = () => {
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+  }, [dateQuery]);
 
   //Variable to control the filtered tasks
   const filteredTasks = taskBuffer.filter((task) => {
@@ -89,7 +90,7 @@ const HomePage = () => {
           {/* Home Page Pagination */}
           <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
             <TaskListPagination />
-            <DateTimeFilter />
+            <DateTimeFilter dateQuery={dateQuery} setDateQuery={setDateQuery} />
           </div>
 
           {/* Footer */}
