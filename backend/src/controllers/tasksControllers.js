@@ -2,8 +2,24 @@ import Task from "../models/Task.js";
 
 export const getAllTasks = async (req, res) => {
   try {
-    const tasks = await Task.find().sort({ createdAt: -1 });
-    res.status(200).json(tasks);
+    const result = await Task.aggregate([
+      {
+        $facet: {
+          tasks: [{ $sort: { createdAt: -1 } }],
+          activeCount: [{ $match: { status: "active" } }, { $count: "count" }],
+          completedCount: [
+            { $match: { status: "completed" } },
+            { $count: "count" },
+          ],
+        },
+      },
+    ]);
+
+    const tasks = result[0].tasks;
+    const activeCount = result[0].activeCount[0]?.count || 0;
+    const completedCount = result[0].completedCount[0]?.count || 0;
+
+    res.status(200).json({ tasks, activeCount, completedCount });
   } catch (error) {
     console.log("Failed to get all tasks", error);
     res.status(500).json({ message: "Internal server error" });
@@ -12,7 +28,7 @@ export const getAllTasks = async (req, res) => {
 
 export const createTask = async (req, res) => {
   try {
-    const { title } = req.body;
+    const { title, status } = req.body;
 
     const taskDuplicated = await Task.findOne({ title });
     if (taskDuplicated)
@@ -20,7 +36,7 @@ export const createTask = async (req, res) => {
         .status(500)
         .json({ message: "Can not create a duplicated task" });
 
-    const task = new Task({ title });
+    const task = new Task({ title, status });
 
     const newTask = await task.save();
     res.status(201).json(newTask);

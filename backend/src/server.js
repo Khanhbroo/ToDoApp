@@ -2,6 +2,7 @@ import express from "express";
 import tasksRouters from "./routes/tasksRouters.js";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
+import cors from "cors";
 
 // Get environment variables
 dotenv.config();
@@ -11,6 +12,9 @@ const port = process.env.PORT || 5001;
 
 // Middleware to parse req.body
 app.use(express.json());
+
+// Middleware for CORS
+app.use(cors({ origin: "http://localhost:5173" }));
 
 // Middleware to get all routes for tasks
 app.use("/api/tasks", tasksRouters);
