@@ -1,4 +1,8 @@
 import { useEffect, useState } from "react";
+import api from "@/lib/axios";
+
+import { toast } from "sonner";
+import type { Task } from "@/type/cardType";
 
 import AddTask from "@/components/AddTask";
 import DateTimeFilter from "@/components/DateTimeFilter";
@@ -7,9 +11,6 @@ import Header from "@/components/Header";
 import StatsAndFilters from "@/components/StatsAndFilters";
 import TaskList from "@/components/TaskList";
 import TaskListPagination from "@/components/TaskListPagination";
-import { toast } from "sonner";
-import axios from "axios";
-import type { Task } from "@/type/cardType";
 
 const HomePage = () => {
   const [taskBuffer, setTaskBuffer] = useState<Task[]>([]);
@@ -20,7 +21,7 @@ const HomePage = () => {
   // Logic to fetch tasks from the backend
   const fetchTasks = async () => {
     try {
-      const res = await axios.get("http://localhost:5001/api/tasks");
+      const res = await api.get("/tasks");
       setTaskBuffer(res.data.tasks || []);
       setActiveTaskCount(res.data.activeCount || 0);
       setCompletedTaskCount(res.data.completedCount || 0);
@@ -29,6 +30,10 @@ const HomePage = () => {
       toast.error("Failed to fetch tasks. Please try again.");
     }
   };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
 
   //Variable to control the filtered tasks
   const filteredTasks = taskBuffer.filter((task) => {
@@ -42,9 +47,9 @@ const HomePage = () => {
     }
   });
 
-  useEffect(() => {
+  const handleTaskChanged = () => {
     fetchTasks();
-  }, []);
+  };
 
   return (
     <div className="min-h-screen w-full bg-white relative overflow-hidden">
@@ -64,7 +69,7 @@ const HomePage = () => {
           <Header />
 
           {/* Adding Tasks */}
-          <AddTask />
+          <AddTask handleNewTaskAdded={handleTaskChanged} />
 
           {/* Statistic and Filter */}
           <StatsAndFilters
@@ -75,7 +80,11 @@ const HomePage = () => {
           />
 
           {/* Task List */}
-          <TaskList filteredTasks={filteredTasks} />
+          <TaskList
+            filteredTasks={filteredTasks}
+            filter={filter}
+            handleTaskChanged={handleTaskChanged}
+          />
 
           {/* Home Page Pagination */}
           <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">

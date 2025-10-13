@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import api from "@/lib/axios";
 import { cn } from "@/lib/utils";
 import type { Task } from "@/type/cardType";
 import {
@@ -10,9 +11,77 @@ import {
   SquarePen,
   Trash2,
 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
-const TaskCard = ({ task, index }: { task: Task; index: number }) => {
-  let isEditing = false;
+const TaskCard = ({
+  task,
+  index,
+  handleTaskChanged,
+}: {
+  task: Task;
+  index: number;
+  handleTaskChanged: () => void;
+}) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [updateTaskTitle, setUpdateTaskTitle] = useState(task.title || "");
+
+  const deleteTask = async (taskId: string) => {
+    try {
+      if (window.confirm("Are you sure you want to delete this task?")) {
+        await api.delete(`/tasks/${taskId}`);
+        toast.success("Task deleted successfully!");
+        handleTaskChanged();
+      }
+    } catch (error) {
+      console.log("Error deleting task:", error);
+      toast.error("Failed to delete the task. Please try again.");
+    }
+  };
+
+  const updateTask = async () => {
+    try {
+      if (updateTaskTitle.trim()) {
+        setIsEditing(false);
+        await api.put(`/tasks/${task._id}`, { title: updateTaskTitle });
+        handleTaskChanged();
+        toast.success("Task updated to " + updateTaskTitle + " successfully!");
+      } else {
+        toast.error("Task title cannot be empty.");
+      }
+    } catch (error) {
+      console.log("Error updating task:", error);
+      toast.error("Failed to update the task. Please try again.");
+    }
+  };
+
+  const toggleCardButton = async () => {
+    try {
+      if (task.status === "active") {
+        await api.put(`/tasks/${task._id}`, {
+          status: "completed",
+          completedAt: new Date().toISOString(),
+        });
+        toast.success(`Task "${task.title}" marked as completed!`);
+      } else {
+        await api.put(`/tasks/${task._id}`, {
+          status: "active",
+          completedAt: null,
+        });
+        toast.success(`Task "${task.title}" marked as active!`);
+      }
+      handleTaskChanged();
+    } catch (error) {
+      console.log("Error toggling task status:", error);
+      toast.error("Failed to toggle task status. Please try again.");
+    }
+  };
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      updateTask();
+    }
+  };
 
   return (
     <Card
@@ -33,6 +102,7 @@ const TaskCard = ({ task, index }: { task: Task; index: number }) => {
               ? "text-success hover:text-success/80"
               : "text-muted-foreground hover:text-primary"
           )}
+          onClick={toggleCardButton}
         >
           {task.status === "completed" ? (
             <CheckCircle2 className="size-5" />
@@ -47,6 +117,13 @@ const TaskCard = ({ task, index }: { task: Task; index: number }) => {
             <Input
               placeholder="Need to do anything?"
               className="flex-1 h-12 text-base border-border/50 focus:border-primary/50 focus:ring-primary/20"
+              value={updateTaskTitle}
+              onChange={(e) => setUpdateTaskTitle(e.target.value)}
+              onKeyDown={handleKeyPress}
+              onBlur={() => {
+                setIsEditing(false);
+                setUpdateTaskTitle(task.title || "");
+              }}
             />
           ) : (
             <p
@@ -72,11 +149,7 @@ const TaskCard = ({ task, index }: { task: Task; index: number }) => {
                 <span className="text-xs text-muted-foreground"> - </span>
                 <Calendar className="size-3 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">
-                  {new Date(task.completedAt).toLocaleString("vi-VN", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  })}
+                  {new Date(task.completedAt).toLocaleString("vi-VN")}
                 </span>
               </>
             )}
@@ -84,12 +157,21 @@ const TaskCard = ({ task, index }: { task: Task; index: number }) => {
         </div>
 
         {/* Edit and delete button */}
-        <div className="hidden gap-2 group-hover:inline-flex animate-slide-up">
+        <div
+          className={cn(
+            "gap-2 group-hover:inline-flex animate-slide-up",
+            isEditing ? "inline-flex" : "hidden"
+          )}
+        >
           {/* Edit button */}
           <Button
             variant="ghost"
             size="icon"
             className="shrink-0 transition-colors size-8 text-muted-foreground hover:text-info"
+            onClick={() => {
+              setIsEditing((prev) => !prev);
+              setUpdateTaskTitle(task.title || "");
+            }}
           >
             <SquarePen className="size-4 " />
           </Button>
@@ -99,6 +181,7 @@ const TaskCard = ({ task, index }: { task: Task; index: number }) => {
             variant="ghost"
             size="icon"
             className="shrink-0 transition-colors size-8 text-muted-foreground hover:text-destructive"
+            onClick={() => deleteTask(task._id || "")}
           >
             <Trash2 className="size-4 " />
           </Button>
