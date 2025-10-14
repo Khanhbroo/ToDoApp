@@ -18,7 +18,7 @@ const HomePage = () => {
   const [activeTaskCount, setActiveTaskCount] = useState(0);
   const [completedTaskCount, setCompletedTaskCount] = useState(0);
   const [filter, setFilter] = useState("all");
-  const [dateQuery, setDateQuery] = useState("month");
+  const [dateQuery, setDateQuery] = useState("all");
   const [page, setPage] = useState<number>(1);
 
   // Logic to fetch tasks from the backend

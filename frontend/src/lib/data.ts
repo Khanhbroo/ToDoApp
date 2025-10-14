@@ -21,7 +21,7 @@ export const options = [
     value: "year",
     label: "This Year",
   },
-  { value: "all", label: "Al" },
+  { value: "all", label: "All" },
 ];
 
 export const visibleTaskLimit = 4;
