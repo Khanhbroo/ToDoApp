@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import api from "@/lib/axios";
+import { visibleTaskLimit } from "@/lib/data";
 
 import { toast } from "sonner";
 import type { Task } from "@/type/cardType";
@@ -17,10 +18,11 @@ const HomePage = () => {
   const [activeTaskCount, setActiveTaskCount] = useState(0);
   const [completedTaskCount, setCompletedTaskCount] = useState(0);
   const [filter, setFilter] = useState("all");
-  const [dateQuery, setDateQuery] = useState("today");
+  const [dateQuery, setDateQuery] = useState("month");
+  const [page, setPage] = useState<number>(1);
 
   // Logic to fetch tasks from the backend
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       const res = await api.get(`/tasks?filter=${dateQuery}`);
       setTaskBuffer(res.data.tasks || []);
@@ -30,11 +32,15 @@ const HomePage = () => {
       console.log("Error fetching tasks:", error);
       toast.error("Failed to fetch tasks. Please try again.");
     }
-  };
+  }, [dateQuery]);
 
   useEffect(() => {
     fetchTasks();
-  }, [dateQuery]);
+  }, [dateQuery, fetchTasks]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [filter, dateQuery]);
 
   //Variable to control the filtered tasks
   const filteredTasks = taskBuffer.filter((task) => {
@@ -51,6 +57,34 @@ const HomePage = () => {
   const handleTaskChanged = () => {
     fetchTasks();
   };
+
+  const visibleTasks = filteredTasks.slice(
+    (page - 1) * visibleTaskLimit,
+    page * visibleTaskLimit
+  );
+
+  const totalPages = Math.ceil(filteredTasks.length / visibleTaskLimit);
+
+  const handleNext = () => {
+    if (page < totalPages) {
+      setPage((prev) => prev + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (page > 1) {
+      setPage((prev) => prev - 1);
+    }
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  // Go back 1 page if users delete the final task of 1 page
+  if (visibleTasks.length === 0) {
+    handlePrev();
+  }
 
   return (
     <div className="min-h-screen w-full bg-white relative overflow-hidden">
@@ -82,14 +116,20 @@ const HomePage = () => {
 
           {/* Task List */}
           <TaskList
-            filteredTasks={filteredTasks}
+            filteredTasks={visibleTasks}
             filter={filter}
             handleTaskChanged={handleTaskChanged}
           />
 
           {/* Home Page Pagination */}
           <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
-            <TaskListPagination />
+            <TaskListPagination
+              handleNext={handleNext}
+              handlePrev={handlePrev}
+              handlePageChange={handlePageChange}
+              page={page}
+              totalPages={totalPages}
+            />
             <DateTimeFilter dateQuery={dateQuery} setDateQuery={setDateQuery} />
           </div>
 

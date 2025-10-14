@@ -23,3 +23,5 @@ export const options = [
   },
   { value: "all", label: "Al" },
 ];
+
+export const visibleTaskLimit = 4;
