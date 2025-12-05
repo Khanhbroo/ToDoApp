@@ -29,17 +29,45 @@ https://todoapp-z83f.onrender.com/
 
 ---
 
+## 🗂️ Project Structure
+
+```
+ToDoApp/
+├── backend/               # Backend API (Node.js + TypeScript)
+│   ├── src/               # Source code: routes, controllers, models, etc.
+│   ├── package.json       # Backend dependencies & scripts
+│   └── (other backend config files)
+├── frontend/              # Frontend UI (TypeScript + HTML + CSS)
+│   ├── src/               # Frontend source code: UI components, logic
+│   ├── package.json       # Frontend dependencies & scripts
+│   └── (other frontend config files)
+├── .gitignore             # Git ignore file  
+├── package.json           # Root package — for project-level dependencies / scripts  
+├── package-lock.json      # Lockfile for reproducible installs  
+└── README.md              # This README file  
+```
+
+---
+
+### 📄 Explanation
+
+- **backend/** — contains all server-side code: API endpoints, business logic, data handling.  
+- **frontend/** — contains client-side code: UI, user interactions, task rendering.  
+- **Root files** — `.gitignore`, `package.json`, `package-lock.json`, plus the main README.  
+
+
+
 ## ✨ Features
 
-### ✅ Core TodoApp Features  
-- Create new tasks  
-- Edit existing tasks  
-- Delete tasks  
-- Mark tasks as completed or incomplete  
-- Simple and intuitive UI  
-- API-based list system (`/1`, `/2`, etc.)  
-- Automatically updates task states  
-- Fast and lightweight with TypeScript efficiency  
+### Core TodoApp Features  
+- ✍️ **Create new tasks**  
+- ✏️ **Edit existing tasks**  
+- 🗑️ **Delete tasks**  
+- ✅ **Mark tasks as completed or incomplete**  
+- 🎨 **Simple and intuitive UI**  
+- 🔗 **API-based list system** (`/1`, `/2`, etc.)  
+- 🔄 **Automatically updates task states**  
+- ⚡ **Fast and lightweight with TypeScript efficiency**  
 
 ---
 
@@ -105,7 +133,7 @@ Or open `index.html` directly in a browser.
 
 ---
 
-## 🧑‍💻 Usage
+## ⚡ Usage
 
 Once the app is running:
 
@@ -138,12 +166,38 @@ Contributions are welcome!
 
 ---
 
-## 👨‍💻 Author  
-**ToDoApp – Developed by Khanh Doan.**  
-This is my official product built with ❤️ using the **MERN Stack (MongoDB, Express, React, Node.js)**.  
-Feel free to contribute or fork the repo for your own projects.
+## 📸 Screenshot
+<img width="1800" height="900" alt="image" src="https://github.com/user-attachments/assets/289f6941-19ed-46bb-85be-477c6418b85c" />
+<img width="857" height="804" alt="image" src="https://github.com/user-attachments/assets/fa492ef0-bd14-458e-874a-ba75f19e8c71" />
+
+## 🔮 Future Improvements
+
+Here are some planned enhancements to make ToDoApp more powerful and user-friendly:
+
+- 🔐 **Add user authentication** (login/register)  
+- 🗂️ **Support multiple todo lists per user**  
+- 🏷️ **Add task categories or tags**  
+- ⏰ **Add due dates, reminders, and notifications**  
+- ↕️ **Implement drag-and-drop task reordering**  
+- 🌙 **Add dark mode toggle**  
+- 🎨 **Improve UI/UX with animations and better layout**  
+- 💾 **Add database persistence for long-term storage**  
+- 📊 **Build a dashboard with task statistics** (completed %, streaks, productivity score)  
+- 🔄 **Enable syncing across devices**  
+- 📱 **Add full mobile-responsive layout**  
 
 ---
 
+## 👨‍💻 Author  
+
+### ✨ **ToDoApp — Developed by Khanh Doan**  
+Built with ❤️ using the **MERN Stack (MongoDB, Express, React, Node.js)**.  
+- 🧑‍🚀 Passionate full-stack developer  
+- 💡 Loves building clean and efficient applications  
+- 🚀 Open to contributions, ideas, and collaborations  
+
+---
 ## ⭐ Support  
+**Feel free to fork, contribute, or use this project as a foundation for your own apps.**  
+Your support means a lot! ⭐
 If you like this project, please give it a **⭐ star on GitHub** — it helps a lot!
